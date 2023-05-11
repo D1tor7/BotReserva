@@ -10,11 +10,11 @@ from firebase_admin import db
 firebase_sdk =credentials.Certificate('botreservas-386400-firebase-adminsdk-1nqww-9a3e7682a6.json')
 firebase_admin.initialize_app(firebase_sdk,{'databaseURL': 'https://botreservas-386400-default-rtdb.firebaseio.com/'})
 
-dni = '73881882'
-ref = db.reference('/Clientes/73881882/Reserva/Hotel/' )
+dni = '74707181'
+ref = db.reference('/Clientes/' + dni )
 data = ref.get()
 if data:
-    print(data)
+    print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fechaIn} hasta el {FechaSal}, un total de {NumDias} días.")
 else:
     print("No se encontraron datos para el DNI " + dni)
     

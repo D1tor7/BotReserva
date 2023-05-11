@@ -112,6 +112,7 @@ def reserve_room():
         "FechaSal": fecha_out_str,
         "NumDias": num_dias
     })
+    print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
     speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
 
 
