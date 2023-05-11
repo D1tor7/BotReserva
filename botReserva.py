@@ -5,6 +5,8 @@ import sqlite3
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import re
+
 
 
 firebase_sdk =credentials.Certificate('botreservas-386400-firebase-adminsdk-1nqww-9a3e7682a6.json')
@@ -55,24 +57,36 @@ def update_reservation():
     speak(f"¡Listo! Tu reserva ha sido actualizada para el {new_checkin_date} hasta el {new_checkout_date}.")
     
 def reserve_room():
-    speak("¿Cuál es tu nombre?")
-    name = listen()
-    if name == "":
-        speak("No pude entender tu nombre. Intenta de nuevo.")
+    speak("¿Cuál es tu DNI?")
+    dni = listen()
+    dni = re.sub(r"\s+", "", dni)  # eliminar espacios en blanco
+    if dni == "":
+        speak("No pude entender tu DNI. Intenta de nuevo.")
         return
+    ref = db.reference('/Clientes/' + dni)
+    data = ref.get()
+    if data:
+        print(data['Nombre'])
+    else:
+        print("No se encontraron datos para el DNI " + dni)
+    speak("Bienvenido " + data['Nombre'])
     speak("¿Cuál es la fecha de entrada?")
-    checkin_date = listen()
-    if checkin_date == "":
+    FechaIn = listen()
+    if FechaIn == "":
         speak("No pude entender la fecha de entrada. Intenta de nuevo.")
         return
     speak("¿Cuál es la fecha de salida?")
-    checkout_date = listen()
-    if checkout_date == "":
+    FechaSal = listen()
+    if FechaSal == "":
         speak("No pude entender la fecha de salida. Intenta de nuevo.")
         return
-    c.execute("INSERT INTO rooms VALUES (?, ?, ?)", (name, checkin_date, checkout_date))
-    conn.commit()
-    speak(f"¡Listo! Tu reserva ha sido registrada para el {checkin_date} hasta el {checkout_date}.")
+    ref.update({
+        'FechaIn': FechaIn,
+        'FechaSal': FechaSal
+    })
+    
+    speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {FechaIn} hasta el {FechaSal}.")
+
 
 
 def main():
