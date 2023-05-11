@@ -6,6 +6,9 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 import re
+import datetime
+import dateparser
+
 
 
 
@@ -45,6 +48,14 @@ def listen():
                 speak("No pude entenderte. Intenta de nuevo.")
     return text
 
+def convertir_fecha(fecha_hablada):
+    fecha = dateparser.parse(fecha_hablada)
+    if fecha:
+        fecha_str = fecha.strftime("%d/%m/%Y")
+        return fecha_str
+    else:
+        return None
+
 def update_reservation():
     speak("¿Cuál es tu nombre?")
     name = listen()
@@ -70,22 +81,38 @@ def reserve_room():
     else:
         print("No se encontraron datos para el DNI " + dni)
     speak("Bienvenido " + data['Nombre'])
-    speak("¿Cuál es la fecha de entrada?")
-    FechaIn = listen()
-    if FechaIn == "":
+    speak("¿Qué habitacion deseas reservar?")
+    Habitacion = listen()
+    if Habitacion == "":
+        speak("No pude entender el numero de habitacion. Intenta de nuevo.")
+        return
+    speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
+    fecha_in_str = listen()
+    fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
+    if fecha_in is None:
         speak("No pude entender la fecha de entrada. Intenta de nuevo.")
         return
-    speak("¿Cuál es la fecha de salida?")
-    FechaSal = listen()
-    if FechaSal == "":
+    fecha_in = fecha_in.replace(year=2023)
+    fecha_in_str = fecha_in.strftime("%d/%m/%Y")
+    speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
+    fecha_out_str = listen()
+    fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
+    if fecha_out is None:
         speak("No pude entender la fecha de salida. Intenta de nuevo.")
         return
-    ref.update({
-        'FechaIn': FechaIn,
-        'FechaSal': FechaSal
+    fecha_out = fecha_out.replace(year=2023)
+    fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+    num_dias = (fecha_out - fecha_in).days
+    if num_dias < 1:
+        speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
+        return
+    ref.child("Reserva").child("Hotel").update({
+        "Habitacion": Habitacion,
+        "FechaIn": fecha_in_str,
+        "FechaSal": fecha_out_str,
+        "NumDias": num_dias
     })
-    
-    speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {FechaIn} hasta el {FechaSal}.")
+    speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
 
 
 

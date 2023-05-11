@@ -11,9 +11,10 @@ firebase_sdk =credentials.Certificate('botreservas-386400-firebase-adminsdk-1nqw
 firebase_admin.initialize_app(firebase_sdk,{'databaseURL': 'https://botreservas-386400-default-rtdb.firebaseio.com/'})
 
 dni = '73881882'
-ref = db.reference('/Clientes/' + dni)
+ref = db.reference('/Clientes/73881882/Reserva/Hotel/' )
 data = ref.get()
 if data:
-    print(data['Nombre'])
+    print(data)
 else:
     print("No se encontraron datos para el DNI " + dni)
+    
