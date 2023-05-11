@@ -11,7 +11,7 @@ firebase_sdk =credentials.Certificate('botreservas-386400-firebase-adminsdk-1nqw
 firebase_admin.initialize_app(firebase_sdk,{'databaseURL': 'https://botreservas-386400-default-rtdb.firebaseio.com/'})
 
 dni = '74707181'
-ref = db.reference('/Clientes/' + dni )
+ref = db.reference('Cliente/74707181/Reserva/Habitacion/401')
 data = ref.get()
 if data:
     print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fechaIn} hasta el {FechaSal}, un total de {NumDias} días.")

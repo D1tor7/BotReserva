@@ -55,6 +55,16 @@ def convertir_fecha(fecha_hablada):
         return fecha_str
     else:
         return None
+    
+def check_availability(Habitacion, fecha_in, fecha_out):
+    ref = db.reference('/Reservas')
+    reservas = ref.order_by_child('Habitacion').equal_to(Habitacion).get()
+    for reserva_id, reserva in reservas.items():
+        fecha_in_reserva = dateparser.parse(reserva['FechaIn'], languages=['es']).date()
+        fecha_out_reserva = dateparser.parse(reserva['FechaSal'], languages=['es']).date()
+        if fecha_in_reserva <= fecha_in <= fecha_out_reserva or fecha_in_reserva <= fecha_out <= fecha_out_reserva:
+            return False
+    return True
 
 def update_reservation():
     speak("¿Cuál es tu nombre?")
@@ -78,42 +88,83 @@ def reserve_room():
     data = ref.get()
     if data:
         print(data['Nombre'])
+        speak("Bienvenido " + data['Nombre'])
+        speak("¿Qué habitacion deseas reservar?")
+        Habitacion = listen()
+        if Habitacion == "":
+            speak("No pude entender el numero de habitacion. Intenta de nuevo.")
+            return
+        speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
+        fecha_in_str = listen()
+        fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
+        if fecha_in is None:
+            speak("No pude entender la fecha de entrada. Intenta de nuevo.")
+            return
+        fecha_in = fecha_in.replace(year=2023)
+        fecha_in_str = fecha_in.strftime("%d/%m/%Y")
+        speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
+        fecha_out_str = listen()
+        fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
+        if fecha_out is None:
+            speak("No pude entender la fecha de salida. Intenta de nuevo.")
+            return
+        fecha_out = fecha_out.replace(year=2023)
+        fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+        num_dias = (fecha_out - fecha_in).days
+        if num_dias < 1:
+            speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
+            return
+        ref.child("Reserva").child("Hotel").update({
+            "Habitacion": Habitacion,
+            "FechaIn": fecha_in_str,
+            "FechaSal": fecha_out_str,
+            "NumDias": num_dias
+        })
+        print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
+        speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
     else:
         print("No se encontraron datos para el DNI " + dni)
-    speak("Bienvenido " + data['Nombre'])
-    speak("¿Qué habitacion deseas reservar?")
-    Habitacion = listen()
-    if Habitacion == "":
-        speak("No pude entender el numero de habitacion. Intenta de nuevo.")
-        return
-    speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
-    fecha_in_str = listen()
-    fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
-    if fecha_in is None:
-        speak("No pude entender la fecha de entrada. Intenta de nuevo.")
-        return
-    fecha_in = fecha_in.replace(year=2023)
-    fecha_in_str = fecha_in.strftime("%d/%m/%Y")
-    speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
-    fecha_out_str = listen()
-    fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
-    if fecha_out is None:
-        speak("No pude entender la fecha de salida. Intenta de nuevo.")
-        return
-    fecha_out = fecha_out.replace(year=2023)
-    fecha_out_str = fecha_out.strftime("%d/%m/%Y")
-    num_dias = (fecha_out - fecha_in).days
-    if num_dias < 1:
-        speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
-        return
-    ref.child("Reserva").child("Hotel").update({
-        "Habitacion": Habitacion,
-        "FechaIn": fecha_in_str,
-        "FechaSal": fecha_out_str,
-        "NumDias": num_dias
-    })
-    print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
-    speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días.")
+        speak("Veo que eres un cliente nuevo")
+        speak("¿Cuál es tu nombre?")
+        name = listen()
+        reserva_ref = db.reference('/Clientes/' + dni)
+        reserva_ref.set({
+            'Nombre': name
+            })
+        speak("Bienvenido " + name)
+        speak("¿Qué habitacion deseas reservar?")
+        Habitacion = listen()
+        if Habitacion == "":
+            speak("No pude entender el numero de habitacion. Intenta de nuevo.")
+            return
+        speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
+        fecha_in_str = listen()
+        fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
+        if fecha_in is None:
+            speak("No pude entender la fecha de entrada. Intenta de nuevo.")
+            return
+        fecha_in = fecha_in.replace(year=2023)
+        fecha_in_str = fecha_in.strftime("%d/%m/%Y")
+        speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
+        fecha_out_str = listen()
+        fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
+        if fecha_out is None:
+            speak("No pude entender la fecha de salida. Intenta de nuevo.")
+            return
+        fecha_out = fecha_out.replace(year=2023)
+        fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+        num_dias = (fecha_out - fecha_in).days
+        if num_dias < 1:
+            speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
+            return
+        ref.child("Reserva").child("Hotel").update({
+            "Habitacion": Habitacion,
+            "FechaIn": fecha_in_str,
+            "FechaSal": fecha_out_str,
+            "NumDias": num_dias
+        })
+        print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ num_dias +" días.")
+        speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ num_dias +" días.")
 
 
 
