@@ -196,33 +196,38 @@ def reserve_room():
         calcular_num_habitaciones()
         speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
         fecha_in_str = listen()
-        fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=["es"])
+        fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
         if fecha_in is None:
             speak("No pude entender la fecha de entrada. Intenta de nuevo.")
             return
         fecha_in = fecha_in.replace(year=2023)
         fecha_in_str = fecha_in.strftime("%d/%m/%Y")
+        
         speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
         fecha_out_str = listen()
-        fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=["es"])
+        fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
         if fecha_out is None:
             speak("No pude entender la fecha de salida. Intenta de nuevo.")
             return
         fecha_out = fecha_out.replace(year=2023)
         fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+        
         num_dias = (fecha_out - fecha_in).days
         if num_dias < 1:
-            speak(
-                "La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo."
-            )
+            speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
             return
+        
+        precio_total = num_dias * num_habitaciones * precio_habitacion
+        
         ref.child("Reserva").child("Hotel").update({
             "FechaIn": fecha_in_str,
             "FechaSal": fecha_out_str,
-            "NumDias": num_dias
+            "NumDias": num_dias,
+            "PrecioTotal": precio_total,
+            
         })
-        print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ str(num_dias) +" días.")
-        speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ str(num_dias) +" días.")
+        print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
+        speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
 
 
 
