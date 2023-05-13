@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "prueba-agente-dnpf",
+  "private_key_id": "c3237e543e4f32b5d37cec07c3b49a1ad3622a47",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC9Bw41t0xQnJJi\nAdRATRqrJ4GmhmTjQU9tyvcMKixHbmhcvU3q9OfwaXCQBDpUkBCi7RauBJ/wCP2B\n6clObrXhAevhl1BCTV+26ghJ57bPbHG3HmGs9Fk9uYJP5Nk9lLuJWyuTXo+El1N0\nlJ28C99C3Yz7nDarASW236bOCZ2VVkfYaPWhQL9qVAdvuidvXlpHXqigipVRWVD6\ndARzU4GRoxWUhp4axGaO3JMvFiFHOXOpnTKowMofL7tgDZR+2dDlsbDOEoOGuX7g\nRQRELIBIBLmmxNLdGv3Ya7EVBWvCjkIXC55XjuNdbsi8IQoEbdb8G8KveV738qpy\nT7t0+4ctAgMBAAECggEAFnFRAZWqrON6CcLX1W6SHQIKxZ+tOMIXURzI6hvTuANm\nxqP/LUc4hnWuVJr75fBY2U824yBPcOtQVe1Q5kwEshtNSzJw5/5Rv+DXbRbiwIvK\nkIg95o/4THjK/PtZw5L2FR/K86tFdOOWl//RHnN2ZXTyeSkZ4IG5XZX+MvY3THSG\nkWKuoxlBTpy0oY2cjy0O1sP6Ag9twRu77nxgQx7bBvsqsP1gerZbGwHcr9N0Kwyv\nNGmJXKKYCuK78dwYtpVycm178uokDsKCg74gg9XeDJ7hO6s/uZ3Ltdn8+UhNlGqn\n4aUnqJgBUHv8uX+wSjM/Ts8AHnL5nwcTxhc9dRMDrQKBgQDwI4LCbcocAwrqpbW7\nYJO+ougoK++42DmqUrcA85aiSS8DgNL9jLMdwZ9nQiuD9vGvDRgJBXBGMyua+Yww\nBTYKxvhe5ofUAG1A2nXOrezQEdeR8aBvInbbNUiUf72ljAiGSKJZ7uUbuk0yD7ti\nsT/oUht8WKH1bZdPc2PslkleewKBgQDJg09IsT8F2LoE/lJC5/LHeM9O33wa7w5x\nUOdEMr8SWadwdrr7QlXr0ADwx8RZ6p9GgAD5qcO2C/hSIGz5qEEz2Qrms3UBSTct\nRJh8r7v1OJ0Fq5XJAHBwB/zSL5NJKrQMRXo75VW4wAIQGABkcQkZiCLbEXvY8SX/\nQ2MOD80UdwKBgB1iCvblXiyNRsGtYw45Y/qYjlWUArIYav3nPxMzuwPCdqk0Ex0J\nIUWL0ohc9VwhVDM6I+2+p50/V5+P11Js4M7yx6M9C/Op1bRwxqdyap6PAFSQPzQ6\nAFcULvxUoQznlIdxzcO5UnlRE28Ds8cArzQrD8foRHD2ZuRG1zw0q2ePAoGATh/a\nXRRamqmrdMQkoEvMlAkCVlHOi6Kitsvm3UnPSg34HGHrm/3b0dCSjMbmGPYdSffW\naPSoK6v4Wd64YRIaNT+wOkDY2+bGvYYamDyJYkjQl6IuL/87mDOAkPxg3bzwkNFe\n0lnXIglOw26KuGYaYQumd8gPe8wCLzSw8oKtv4ECgYBHZd/6uTaAoqEfZTKrT0gA\n27THX+tekr7n5DFlTYA4ivwya4/jSxxRLlh4gOVOntx7S321snk16G5rd9W2/dM2\nWejH6u2oPQpNAq9v2l/baObE8sv0noS5DDeQnhIpeKL41PgpMKikHlc+q+N0iQTH\nkPUx96WWfHMfFJMXiUkKBw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "chat-bot@prueba-agente-dnpf.iam.gserviceaccount.com",
+  "client_id": "111280437199364536029",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/chat-bot%40prueba-agente-dnpf.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
