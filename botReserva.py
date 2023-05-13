@@ -115,9 +115,27 @@ def calcular_num_habitaciones():
 
     if npersonas <= 2:
         num_habitaciones = 1
+        speak("¿Qué habitacion deseas reservar?")
+        Habitacion = listen()
+        if Habitacion == "":
+            speak("No pude entender el numero de habitacion. Intenta de nuevo.")
+            return
+            ref.child("Reserva").child("Hotel").update({
+            "Habitacion": Habitacion,
+            }
+        )
     else:
         num_habitaciones = math.ceil(npersonas / 2)
         speak(f"Usted debe reservar {num_habitaciones} habitaciones.")
+        speak("¿Qué habitaciones deseas reservar?")
+        Habitacion = listen()
+        if Habitacion == "":
+            speak("No pude entender el numero de habitacion. Intenta de nuevo.")
+            return
+            ref.child("Reserva").child("Hotel").update({
+            "Habitacion": Habitacion,
+            }
+        )
 
 
 def reserve_room():
@@ -134,11 +152,6 @@ def reserve_room():
         print(data['Nombre'])
         speak("Bienvenido " + data['Nombre'])
         calcular_num_habitaciones()
-        speak("¿Qué habitacion deseas reservar?")
-        Habitacion = listen()
-        if Habitacion == "":
-            speak("No pude entender el numero de habitacion. Intenta de nuevo.")
-            return
         speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
         fecha_in_str = listen()
         fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
@@ -160,7 +173,6 @@ def reserve_room():
             speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
             return
         ref.child("Reserva").child("Hotel").update({
-            "Habitacion": Habitacion,
             "FechaIn": fecha_in_str,
             "FechaSal": fecha_out_str,
             "NumDias": num_dias,
@@ -182,11 +194,6 @@ def reserve_room():
         reserva_ref.set({"Nombre": name})
         speak("Bienvenido " + name)
         calcular_num_habitaciones()
-        speak("¿Qué habitacion deseas reservar?")
-        Habitacion = listen()
-        if Habitacion == "":
-            speak("No pude entender el numero de habitacion. Intenta de nuevo.")
-            return
         speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
         fecha_in_str = listen()
         fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=["es"])
@@ -210,13 +217,12 @@ def reserve_room():
             )
             return
         ref.child("Reserva").child("Hotel").update({
-            "Habitacion": Habitacion,
             "FechaIn": fecha_in_str,
             "FechaSal": fecha_out_str,
             "NumDias": num_dias
         })
-        print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ num_dias +" días.")
-        speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ num_dias +" días.")
+        print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ str(num_dias) +" días.")
+        speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ str(num_dias) +" días.")
 
 
 

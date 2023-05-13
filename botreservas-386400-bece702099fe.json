@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "botreservas-386400",
+  "private_key_id": "bece702099fec8fff3b34a95df029f70061a2467",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDNU61I44yladOv\n2EbivnMi3tEf3BjPpqRdmu+RpJtPY3aNs/mOV6dIMStVjnBFrKyD9VsSN2aIO2pW\nUB2NKbpGiqgxYdfJI7Wx90cyg5DLTViI3+fwNFg2ze9HQkSM5bmFO+ihUwQcAePm\nAS/1/+XD+kI61jFqjacfhi8HDgCP/tIoFefoWXoBsoCmL5T6S5C9k0d1vXVTzgQf\nLv8E63OKfJ17fjZ7aorABqCszqAaafn6RL3FcTx2vVcpvzg2degZ8/q8GTH3tkv3\nbIo743ZwGnVyEikoDYRqjpdBpyyCGeuC7FNp8lpSGWRXXODWVcZDtUa7bodx4ZNq\naPuxkqvDAgMBAAECggEABL4Hr4+fN6bVE9JRTiVgmrqTZpf6dA6rly81P048+WgZ\nBzbT7xIJNA/7/z2LTEtWWgnjBkMEpDrdvuFE0suBmOV/nacJM9prn5D63P4llvx8\nrKn3PRizEjj5a3zqq70WkYQ2YEYplHgFX9JBMv5WZoteLOZg587JFbT6BcCwtKKp\nwxS0lf63c1L6vScr4nw8oLVwbVlAYsuWwbfy3W8UPqsLt1P2IZkpSgn+uyra3u+N\nC2OoV5QUF0i96zorwBgGT/0Hx+h+DREIj++PKCsB9pxWu5gybH6ZSoO9dGlCA218\nHAKC7Qyjs4a8IPGnyouJpQzrMYjwK7VC/0KSyF7fsQKBgQD6KVqzJVQ2wwG1ZL/8\nmb0u7xEXSaZe+QXLDCxAub5ouMrM1b/Jh/mNtNdxffFUy/uR1lir356Q1V0PXUeQ\n1Kdk3b80e7jibJ81TQUKPndJhNwJg7nMRfJnQp9OUmzH7PCY6iiXO7Lb5x7jqvpx\na7kQoIHUC89UC4BwxZzq/z1K6wKBgQDSHnKmsMKbsNWKO4gcsQobSlqIjFIZyRzc\nkR2XjjcwEczsQ7SYUlPq+EAiwMb2jataDn5aTM5Fz80bUug9LsTNwtQhQGLpLyC8\nMEZkWxcjrnoCLq5jayZ7SJIaD6LXPylJxmFCJWoK/V4eon+9H78faSbkNJa85xE+\nvj0XIgO8iQKBgHSKPXHFyySz1iDuLa585LBvuROTQQlvk25TXm5M2dKpe/jO/0jg\nqraEb/W0SXBKkwkOxUJUq+cnLvJQb12eY9lOoJvPo4MAPW80UUvDbAj49xULo8vx\nLgtC8zomlfzRegiS1ZQWwK1HT5Gafo/GMnH3hGQHmG+75/shZIfpnmE/AoGAW2Pk\n6D2vl3o1lvdHv3r9c1tGv2eQ+igwRntTzKyNsnm7kPPt4+bDG0s40iTZJTn/Up9F\nM89+VH0KsBzCaIIkFX7tNz1DCDt4WIICy/mWue1Uoghdz142kZ7B9VXhtQ+CzNTd\nTqDpW7hSLK7vMnpRbb8VrGJ3Qdia9phWB+7Cg0kCgYABL1x1ZtTRPgGME+mcY4zC\n9l0w7g2EbLi+qRB0hDOuUKVIpENX99lBzf2v8Kb9YZyjnyPRTavrSTezwaz7982E\nMV2GBMt81eRrI6sMmTQqgtxBlVv6YqwviQI53Z5hW265M3RKiQxgblrI6MU4aPz2\nQiXXYmpWZYFTKayBRU/pRw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "chatvoiceproject@botreservas-386400.iam.gserviceaccount.com",
+  "client_id": "107970119084542859116",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/chatvoiceproject%40botreservas-386400.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
