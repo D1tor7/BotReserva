@@ -112,7 +112,6 @@ def calcular_num_habitaciones():
     if npersonas < 1:
         speak("Debe haber al menos una persona para hacer una reserva.")
         return
-
     if npersonas <= 2:
         num_habitaciones = 1
         speak("¿Qué habitacion deseas reservar?")
@@ -122,8 +121,7 @@ def calcular_num_habitaciones():
             return
             ref.child("Reserva").child("Hotel").update({
             "Habitacion": Habitacion,
-            }
-        )
+        })
     else:
         num_habitaciones = math.ceil(npersonas / 2)
         speak(f"Usted debe reservar {num_habitaciones} habitaciones.")
@@ -134,24 +132,23 @@ def calcular_num_habitaciones():
             return
             ref.child("Reserva").child("Hotel").update({
             "Habitacion": Habitacion,
-            }
-        )
-
+        })
+    return num_habitaciones
 
 def reserve_room():
+    precio_habitacion = 40
     speak("¿Cuál es tu DNI?")
     dni = listen()
-    dni = re.sub(r"\s+", "", dni)  # eliminar espacios en blanco
+    dni = re.sub(r"\s+", "", dni) # eliminar espacios en blanco
     if dni == "":
         speak("No pude entender tu DNI. Intenta de nuevo.")
         return
-
     ref = db.reference('/Clientes/' + dni)
     data = ref.get()
     if data:
         print(data['Nombre'])
         speak("Bienvenido " + data['Nombre'])
-        calcular_num_habitaciones()
+        num_habitaciones = calcular_num_habitaciones()
         speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
         fecha_in_str = listen()
         fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
@@ -160,6 +157,7 @@ def reserve_room():
             return
         fecha_in = fecha_in.replace(year=2023)
         fecha_in_str = fecha_in.strftime("%d/%m/%Y")
+        
         speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
         fecha_out_str = listen()
         fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
@@ -168,23 +166,25 @@ def reserve_room():
             return
         fecha_out = fecha_out.replace(year=2023)
         fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+        
         num_dias = (fecha_out - fecha_in).days
         if num_dias < 1:
             speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
             return
+        
+        precio_total = num_dias * num_habitaciones * precio_habitacion
+        
         ref.child("Reserva").child("Hotel").update({
             "FechaIn": fecha_in_str,
             "FechaSal": fecha_out_str,
             "NumDias": num_dias,
+            "PrecioTotal": precio_total,
             
-            }
-        )
-        print(
-            f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días."
-        )
-        speak(
-            f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días."
-        )
+        })
+        
+        print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días. El precio total es {precio_total}.")
+        speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días. El precio total es {precio_total}.")
+
     else:
         print("No se encontraron datos para el DNI " + dni)
         speak("Veo que eres un cliente nuevo")
