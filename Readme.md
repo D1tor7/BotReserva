@@ -9,5 +9,6 @@ Este repositorio contiene un chatbot de voz que utiliza la tecnología de recono
 - pip install firebase-admin
 - pip install regex
 - pip install python-dateutil
-- pip install dateparser ```
+- pip install dateparser 
+- pip install google-cloud-dialogflow
 
