@@ -229,6 +229,87 @@ def reserve_room():
         print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
         speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
 
+def calcular_num_mesas():
+    # Crear referencia al nodo "Reserva/Restaurante"
+    ref = db.reference('Reserva/Restaurante')
+
+    # Preguntar por el número de personas
+    speak("¿Cuántas personas van a asistir?")
+    npersonasm_str = listen()
+    try:
+        npersonasm = int(npersonasm_str)
+    except ValueError:
+        speak("No pude entender el número de personas. Intenta de nuevo.")
+        return
+    if npersonasm < 1:
+        speak("Debe haber al menos una persona para hacer una reserva.")
+        return
+    if npersonasm <= 4:
+        num_mesas = 1
+        speak("Se te ha reservado una mesa.")
+    else:
+        num_mesas = math.ceil(npersonasm / 4)
+        speak(f"A usted se le han reservado {num_mesas} mesas.")
+    
+    ref.update({
+        "Cantidad Mesas": num_mesas,
+    })
+
+    return num_mesas
+
+
+def reserve_mesa():
+    speak("¿Cuál es tu DNI?")
+    dni = listen()
+    dni = re.sub(r"\s+", "", dni) # eliminar espacios en blanco
+    if dni == "":
+        speak("No pude entender tu DNI. Intenta de nuevo.")
+        return
+    ref = db.reference('/Clientes/' + dni)
+    data = ref.get()
+    if data:
+        print(data['Nombre'])
+        speak("Bienvenido " + data['Nombre'])
+        num_mesas = calcular_num_mesas()
+        speak("¿Cuál es la fecha de reserva de mesa? Por favor, indícame dia y luego mes")
+        fecha_in_m_str = listen()
+        fecha_in_m = dateparser.parse(fecha_in_m_str + "/2023", languages=['es'])
+        if fecha_in_m is None:
+            speak("No pude entender la fecha de reserva. Intenta de nuevo.")
+            return
+        fecha_in_m = fecha_in_m.replace(year=2023)
+        fecha_in_m_str = fecha_in_m.strftime("%d/%m/%Y")
+        
+        ref.child("Reserva").child("Restaurante").update({
+            "ReservaMesa": fecha_in_m_str,
+        })
+        
+        print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_m_str}, un total de {num_mesas} mesas.")
+        speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_m_str}, un total de {num_mesas} mesas.")
+
+    else:
+        print("No se encontraron datos para el DNI " + dni)
+        speak("Veo que eres un cliente nuevo")
+        speak("¿Cuál es tu nombre?")
+        name = listen()
+        reserva_ref = db.reference("/Clientes/" + dni)
+        reserva_ref.set({"Nombre": name})
+        speak("Bienvenido " + name)
+        num_mesas = calcular_num_mesas()
+        speak("¿Cuál es la fecha de reserva de mesa? Por favor, indícame dia y luego mes")
+        fecha_in_m_str = listen()
+        fecha_in_m = dateparser.parse(fecha_in_m_str + "/2023", languages=['es'])
+        if fecha_in_m is None:
+            speak("No pude entender la fecha de reserva. Intenta de nuevo.")
+            return
+        fecha_in_m = fecha_in_m.replace(year=2023)
+        fecha_in_m_str = fecha_in_m.strftime("%d/%m/%Y")
+        
+        ref.child("Reserva").child("Restaurante").update({
+            "ReservaMesa": fecha_in_m_str,
+        })
+        print(f"¡Listo! " + name + ", tu reserva ha sido registrada para el "+ fecha_in_m_str +", un total de "+ str(num_mesas) +" mesas.")
+        speak(f"¡Listo! " + name + ", tu reserva ha sido registrada para el "+ fecha_in_m_str +", un total de "+ str(num_mesas) +" mesas.")
 
 
 def main():
@@ -267,20 +348,7 @@ def main():
             restaurant_action = listen().lower()
 
             if restaurant_action == "reserva":
-                speak("¿Cuál es tu nombre?")
-                name = listen()
-                speak("¿Cuál es la fecha de la reserva?")
-                reservation_date = listen()
-                speak("¿A qué hora te gustaría reservar?")
-                reservation_time = listen()
-                c.execute(
-                    "INSERT INTO restaurant VALUES (?, ?, ?)",
-                    (name, reservation_date, reservation_time),
-                )
-                conn.commit()
-                speak(
-                    f"¡Listo! Tu reserva ha sido registrada para el {reservation_date} a las {reservation_time}."
-                )
+                reserve_mesa()
 
             elif restaurant_action == "información":
                 speak(
