@@ -7,10 +7,11 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 import re
+from google.cloud import dialogflow_v2 as dialogflow
 import datetime
 import dateparser
 
-
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "prueba-agente-dnpf-c3237e543e4f.json"
 firebase_sdk = credentials.Certificate(
     "botreservas-386400-firebase-adminsdk-1nqww-9a3e7682a6.json"
 )
@@ -36,8 +37,6 @@ bot_age = "1 año"
 bot_creator = "Hotel UPAO"
 
 engine = pyttsx3.init()
-
-
 def speak(text):
     engine.say(text)
     engine.runAndWait()
@@ -157,33 +156,38 @@ def reserve_room():
             return
         fecha_in = fecha_in.replace(year=2023)
         fecha_in_str = fecha_in.strftime("%d/%m/%Y")
-        
-        speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
-        fecha_out_str = listen()
-        fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
-        if fecha_out is None:
-            speak("No pude entender la fecha de salida. Intenta de nuevo.")
-            return
-        fecha_out = fecha_out.replace(year=2023)
-        fecha_out_str = fecha_out.strftime("%d/%m/%Y")
-        
-        num_dias = (fecha_out - fecha_in).days
-        if num_dias < 1:
-            speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
-            return
-        
+
+        # Aquí usamos un bucle while para validar la fecha de salida
+        valid_date = False # Esta variable nos indica si la fecha de salida es válida o no
+        while not valid_date: # Mientras la fecha de salida no sea válida, repetimos el bucle
+            speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
+            fecha_out_str = listen()
+            fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
+            if fecha_out is None:
+                speak("No pude entender la fecha de salida. Intenta de nuevo.")
+                continue # Usamos continue para saltar al inicio del bucle y pedir la fecha de salida otra vez
+            fecha_out = fecha_out.replace(year=2023)
+            fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+            num_dias = (fecha_out - fecha_in).days
+            if num_dias < 1:
+                speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
+                continue # Usamos continue para saltar al inicio del bucle y pedir la fecha de salida otra vez
+            else:
+                valid_date = True # Si la fecha de salida es válida, cambiamos el valor de la variable a True y salimos del bucle
+
         precio_total = num_dias * num_habitaciones * precio_habitacion
-        
+
         ref.child("Reserva").child("Hotel").update({
-            "FechaIn": fecha_in_str,
-            "FechaSal": fecha_out_str,
-            "NumDias": num_dias,
-            "PrecioTotal": precio_total,
-            
+        "FechaIn": fecha_in_str,
+        "FechaSal": fecha_out_str,
+        "NumDias": num_dias,
+        "PrecioTotal": precio_total,
+
         })
-        
+
         print(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días. El precio total es {precio_total}.")
         speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido registrada para el {fecha_in_str} hasta el {fecha_out_str}, un total de {num_dias} días. El precio total es {precio_total}.")
+
 
     else:
         print("No se encontraron datos para el DNI " + dni)
@@ -202,32 +206,35 @@ def reserve_room():
             return
         fecha_in = fecha_in.replace(year=2023)
         fecha_in_str = fecha_in.strftime("%d/%m/%Y")
-        
-        speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
-        fecha_out_str = listen()
-        fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
-        if fecha_out is None:
-            speak("No pude entender la fecha de salida. Intenta de nuevo.")
-            return
-        fecha_out = fecha_out.replace(year=2023)
-        fecha_out_str = fecha_out.strftime("%d/%m/%Y")
-        
-        num_dias = (fecha_out - fecha_in).days
-        if num_dias < 1:
-            speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
-            return
-        
+
+        # Aquí usamos un bucle while para validar la fecha de salida
+        valid_date = False # Esta variable nos indica si la fecha de salida es válida o no
+        while not valid_date: # Mientras la fecha de salida no sea válida, repetimos el bucle
+            speak("¿Cuál es la fecha de salida? Por favor, indícame dia y luego mes")
+            fecha_out_str = listen()
+            fecha_out = dateparser.parse(fecha_out_str + "/2023", languages=['es'])
+            if fecha_out is None:
+                speak("No pude entender la fecha de salida. Intenta de nuevo.")
+                continue # Usamos continue para saltar al inicio del bucle y pedir la fecha de salida otra vez
+            fecha_out = fecha_out.replace(year=2023)
+            fecha_out_str = fecha_out.strftime("%d/%m/%Y")
+            num_dias = (fecha_out - fecha_in).days
+            if num_dias < 1:
+                speak("La fecha de salida debe ser después de la fecha de entrada. Intenta de nuevo.")
+                continue # Usamos continue para saltar al inicio del bucle y pedir la fecha de salida otra vez
+            else:
+                valid_date = True # Si la fecha de salida es válida, cambiamos el valor de la variable a True y salimos del bucle
+
         precio_total = num_dias * num_habitaciones * precio_habitacion
-        
         ref.child("Reserva").child("Hotel").update({
-            "FechaIn": fecha_in_str,
-            "FechaSal": fecha_out_str,
-            "NumDias": num_dias,
-            "PrecioTotal": precio_total,
-            
+        "FechaIn": fecha_in_str,
+        "FechaSal": fecha_out_str,
+        "NumDias": num_dias,
+        "PrecioTotal": precio_total,
         })
         print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
         speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
+
 
 def calcular_num_mesas():
     # Crear referencia al nodo "Reserva/Restaurante"
@@ -313,78 +320,109 @@ def reserve_mesa():
 
 
 def main():
-    speak(
-        f"Hola, soy {bot_name}, un chatbot creado por {bot_creator} y tengo {bot_age}. ¿En qué puedo ayudarte?, escoge una de las opciones de servicio"
-    )
+    speak( f"Hola, soy {bot_name}, un chatbot creado por {bot_creator} y tengo {bot_age}.")
 
     while True:
-        speak("¿Qué tipo de servicio deseas? ¿Hotel o Restaurante?")
-        service_type = listen().lower()
-
-        if service_type == "hotel":
-            speak(
-                "¿Qué acción deseas realizar? ¿Reserva, Información o Modificación de Reserva?"
-            )
-            hotel_action = listen().lower()
-
-            if hotel_action == "reserva":
-                reserve_room()
-
-            elif hotel_action == "información":
+        speak("¿En que puedo ayudarte?")
+        user_input = listen().lower()
+        
+        if user_input == "servicio":
+            speak("¿Qué tipo de servicio deseas? ¿Hotel o Restaurante?")
+            service_type = listen().lower()
+            if service_type == "hotel":
                 speak(
-                    "Nuestro hotel cuenta con habitaciones cómodas y un restaurante de primera clase. ¿Qué más te gustaría saber?"
+                    "¿Qué acción deseas realizar? ¿Reserva, Información o Modificación de Reserva?"
                 )
+                hotel_action = listen().lower()
 
-            elif hotel_action == "modificación de reserva":
-                update_reservation()
+                if hotel_action == "reserva":
+                    reserve_room()
 
-            else:
-                speak("Lo siento, no entendí tu acción. Por favor intenta de nuevo.")
-
-        elif service_type == "restaurante":
-            speak(
-                "¿Qué acción deseas realizar? ¿Reserva, Información o Modificación de Reserva?"
-            )
-            restaurant_action = listen().lower()
-
-            if restaurant_action == "reserva":
-                reserve_mesa()
-
-            elif restaurant_action == "información":
-                speak(
-                    "Nuestro restaurante ofrece una variedad de platos deliciosos y una extensa lista de vinos. ¿Qué más te gustaría saber?"
-                )
-
-            elif restaurant_action == "modificación de reserva":
-                speak(
-                    "Lo siento, actualmente no es posible modificar reservas en nuestro restaurante. ¿Te gustaría hacer una nueva reserva?"
-                )
-                response = listen().lower()
-
-                if response == "sí":
-                    speak("¿Cuál es tu nombre?")
-                    name = listen()
-                    speak("¿Cuál es la fecha de la reserva?")
-                    reservation_date = listen()
-                    speak("¿A qué hora te gustaría reservar?")
-                    reservation_time = listen()
-                    c.execute(
-                        "INSERT INTO restaurant VALUES (?, ?, ?)",
-                        (name, reservation_date, reservation_time),
-                    )
-                    conn.commit()
+                elif hotel_action == "información":
                     speak(
-                        f"¡Listo! Tu reserva ha sido registrada para el {reservation_date} a las {reservation_time}."
+                        "Nuestro hotel cuenta con habitaciones cómodas y un restaurante de primera clase. ¿Qué más te gustaría saber?"
                     )
+
+                elif hotel_action == "modificación de reserva":
+                    update_reservation()
 
                 else:
-                    speak("Entendido, ¿En qué más puedo ayudarte?")
+                    session_client = dialogflow.SessionsClient()
+                    session = session_client.session_path('prueba-agente-dnpf', '111280437199364536029')
+                    text_input = dialogflow.types.TextInput(text=hotel_action, language_code="es")
+                    query_input = dialogflow.types.QueryInput(text=text_input)
+                    response = session_client.detect_intent(session=session, query_input=query_input)
+                    fulfillment_text = response.query_result.fulfillment_text
+                    print("Respuesta de Dialogflow: {}".format(response.query_result.fulfillment_text))
+                    speak(fulfillment_text)
+                    if response.query_result.action == "input.farewell": # Aquí verificamos si la acción de Dialogflow es input.farewell
+                        break
 
-            else:
-                speak("Lo siento, no entendí tu acción. Por favor intenta de nuevo.")
+            elif service_type == "restaurante":
+                speak(
+                    "¿Qué acción deseas realizar? ¿Reserva, Información o Modificación de Reserva?"
+                )
+                restaurant_action = listen().lower()
 
+                if restaurant_action == "reserva":
+                    reserve_mesa()
+
+                elif restaurant_action == "información":
+                    speak(
+                        "Nuestro restaurante ofrece una variedad de platos deliciosos y una extensa lista de vinos. ¿Qué más te gustaría saber?"
+                    )
+
+                elif restaurant_action == "modificación de reserva":
+                    speak(
+                        "Lo siento, actualmente no es posible modificar reservas en nuestro restaurante. ¿Te gustaría hacer una nueva reserva?"
+                    )
+                    response = listen().lower()
+
+                    if response == "sí":
+                        speak("¿Cuál es tu nombre?")
+                        name = listen()
+                        speak("¿Cuál es la fecha de la reserva?")
+                        reservation_date = listen()
+                        speak("¿A qué hora te gustaría reservar?")
+                        reservation_time = listen()
+                        c.execute(
+                            "INSERT INTO restaurant VALUES (?, ?, ?)",
+                            (name, reservation_date, reservation_time),
+                        )
+                        conn.commit()
+                        speak(
+                            f"¡Listo! Tu reserva ha sido registrada para el {reservation_date} a las {reservation_time}."
+                        )
+
+                    else:
+                        speak("Entendido, ¿En qué más puedo ayudarte?")
+
+                else:
+                    session_client = dialogflow.SessionsClient()
+                    session = session_client.session_path('prueba-agente-dnpf', '111280437199364536029')
+                    text_input = dialogflow.types.TextInput(text=restaurant_action, language_code="es")
+                    query_input = dialogflow.types.QueryInput(text=text_input)
+                    response = session_client.detect_intent(session=session, query_input=query_input)
+                    fulfillment_text = response.query_result.fulfillment_text
+                    print("Respuesta de Dialogflow: {}".format(response.query_result.fulfillment_text))
+                    speak(fulfillment_text)
+                    if response.query_result.action == "input.farewell": # Aquí verificamos si la acción de Dialogflow es input.farewell
+                        break
+
+        elif user_input == "adios":
+            speak("¿Qué tipo de servicio deseas? ¿Hotel o Restaurante?")
+            
         else:
-            speak("Lo siento, no entendí tu servicio. Por favor intenta de nuevo.")
+            session_client = dialogflow.SessionsClient()
+            session = session_client.session_path('prueba-agente-dnpf', '111280437199364536029')
+            text_input = dialogflow.types.TextInput(text=user_input, language_code="es")
+            query_input = dialogflow.types.QueryInput(text=text_input)
+            response = session_client.detect_intent(session=session, query_input=query_input)
+            fulfillment_text = response.query_result.fulfillment_text
+            print("Respuesta de Dialogflow: {}".format(response.query_result.fulfillment_text))
+            speak(fulfillment_text)
+            if response.query_result.action == "input.farewell": # Aquí verificamos si la acción de Dialogflow es input.farewell
+                break
 
 
 if __name__ == "__main__":
