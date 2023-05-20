@@ -346,7 +346,7 @@ def handle_service():
 
     elif service_type == "restaurante":
         speak(
-            "¿Qué acción deseas realizar? ¿Reserva, Información o Modificación de Reserva?"
+            "¿Qué acción deseas realizar? ¿Reserva, Información , Modificación de Reserva o visualizar carta del restaurante ?"
         )
         restaurant_action = listen().lower()
 
@@ -355,7 +355,7 @@ def handle_service():
 
         elif restaurant_action == "información":
             speak(
-                "Nuestro restaurante ofrece una variedad de platos deliciosos y una extensa lista de vinos. ¿Qué más te gustaría saber?"
+                "Nuestro restaurante ofrece una variedad de platos deliciosos y una extensa lista de vinos. ¿Te gustaria saber nuestros platillos o Qué más te gustaría saber?"
             )
 
         elif restaurant_action == "modificación de reserva":
