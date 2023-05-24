@@ -235,6 +235,32 @@ def reserve_room():
         print(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +", un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
         speak(f"¡Listo!" + name + ", tu reserva ha sido registrada para el"+ fecha_in_str +" hasta el "+ fecha_out_str +" un total de "+ str(num_dias) +" días. El precio total es"+ precio_total +".")
 
+def cancel_hotel_reservation():
+    speak("Por favor, proporciona el número de identificación del cliente.")
+    dni = listen()
+    dni = re.sub(r"\s+", "", dni)  # eliminar espacios en blanco
+
+    if dni == "":
+        speak("No pude entender el número de dni. Intenta de nuevo.")
+        return
+
+    ref = db.reference('/Clientes/' + dni)
+    data = ref.get()
+
+    if not data or 'Reserva' not in data:
+        print("No se encontró una reserva para este cliente.")
+        speak("No se encontró una reserva para este cliente.")
+        return
+
+    reservation = data['Reserva']
+    fecha_in_str = reservation['Hotel']['FechaIn']
+    fecha_out_str = reservation['Hotel']['FechaSal']
+
+    ref.child("Reserva").delete()
+
+    print(f"La reserva para el cliente {data['Nombre']} desde {fecha_in_str} hasta {fecha_out_str} ha sido cancelada.")
+    speak(f"La reserva para el cliente {data['Nombre']} desde {fecha_in_str} hasta {fecha_out_str} ha sido cancelada.")
+
 
 def calcular_num_mesas():
     # Crear referencia al nodo "Reserva/Restaurante"
@@ -358,12 +384,36 @@ def modificar_reserva_restaurant():
             modificar_reserva_restaurant()
         else:
             return
+        
+def cancelar_reserva_mesa():
+    speak("¿Cuál es tu DNI?")
+    dni = listen()
+    dni = re.sub(r"\s+", "", dni) # eliminar espacios en blanco
+    if dni == "":
+        speak("No pude entender tu DNI. Intenta de nuevo.")
+        return
+    ref = db.reference('/Clientes/' + dni)
+    data = ref.get()
+    if data and 'Reserva' in data:
+        reserva_data = data['Reserva']
+        if 'Restaurante' in reserva_data:
+            rest_data = reserva_data['Restaurante']
+            if 'ReservaMesa' in rest_data:
+                fecha_reserva = rest_data['ReservaMesa']
+                speak(f"Tu reserva para el {fecha_reserva} ha sido cancelada.")
+                ref.child("Reserva").child("Restaurante").update({
+                    "ReservaMesa": None,
+                })
+                return
+    speak("No se encontró una reserva activa para el DNI " + dni)
+
+
 
 def handle_service():
     speak("¿Qué tipo de servicio deseas? ¿Hotel o Restaurante?")
     service_type = listen().lower()
     if service_type == "hotel":
-        speak("¿Qué acción deseas realizar? ¿Reserva, Información o Modificación de Reserva?")
+        speak("¿Qué acción deseas realizar? ¿Reserva, Información, Modificación o Cancelacion de Reserva?")
         hotel_action = listen().lower()
 
         if hotel_action == "reserva":
@@ -374,6 +424,9 @@ def handle_service():
 
         elif hotel_action == "modificación de reserva":
             update_reservation()
+
+        elif hotel_action == "cancelación de reserva":
+            cancel_hotel_reservation()
 
         else:
             session_client = dialogflow.SessionsClient()
@@ -387,7 +440,7 @@ def handle_service():
 
     elif service_type == "restaurante":
         speak(
-            "¿Qué acción deseas realizar? ¿Reserva, Información , Modificación de Reserva o visualizar carta del restaurante ?"
+            "¿Qué acción deseas realizar? ¿Reserva, Información , Modificación, Cancelacion de Reserva o visualizar carta del restaurante ?"
         )
         restaurant_action = listen().lower()
 
@@ -401,6 +454,9 @@ def handle_service():
 
         elif restaurant_action == "modificación de reserva":
             modificar_reserva_restaurant()
+
+        elif restaurant_action == "cancelación de reserva":
+            cancelar_reserva_mesa()
 
         else:
             session_client = dialogflow.SessionsClient()
