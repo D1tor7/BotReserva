@@ -197,7 +197,7 @@ def reserve_room():
         reserva_ref = db.reference("/Clientes/" + dni)
         reserva_ref.set({"Nombre": name})
         speak("Bienvenido " + name)
-        calcular_num_habitaciones()
+        num_habitaciones = calcular_num_habitaciones()
         speak("¿Cuál es la fecha de entrada? Por favor, indícame dia y luego mes")
         fecha_in_str = listen()
         fecha_in = dateparser.parse(fecha_in_str + "/2023", languages=['es'])
