@@ -318,6 +318,47 @@ def reserve_mesa():
         print(f"¡Listo! " + name + ", tu reserva ha sido registrada para el "+ fecha_in_m_str +", un total de "+ str(num_mesas) +" mesas.")
         speak(f"¡Listo! " + name + ", tu reserva ha sido registrada para el "+ fecha_in_m_str +", un total de "+ str(num_mesas) +" mesas.")
 
+def modificar_reserva_restaurant():
+    speak("¿Cuál es tu DNI?")
+    dni = listen()
+    dni = re.sub(r"\s+", "", dni) # eliminar espacios en blanco
+    if dni == "":
+        speak("No pude entender tu DNI. Intenta de nuevo.")
+        return
+    ref = db.reference('/Clientes/' + dni)
+    data = ref.get()
+    if data:
+        print(data['Nombre'])
+        speak("Bienvenido " + data['Nombre'] + "veo que usted tiene una reserva para el " + data['Reserva']['Restaurante']['ReservaMesa'] + "un total de " + str(data['Reserva']['Restaurante']['CantidadMesas']) + "mesas")
+        speak("Procederemos a hacer su nueva reserva")
+        num_mesas = calcular_num_mesas()
+        speak("¿Cuál es la fecha de reserva de mesa? Por favor, indícame dia y luego mes")
+        fecha_in_m_str = listen()
+        fecha_in_m = dateparser.parse(fecha_in_m_str + "/2023", languages=['es'])
+        if fecha_in_m is None:
+            speak("No pude entender la fecha de reserva. Intenta de nuevo.")
+            return
+        fecha_in_m = fecha_in_m.replace(year=2023)
+        fecha_in_m_str = fecha_in_m.strftime("%d/%m/%Y")
+
+        ref.child("Reserva").child("Restaurante").update({
+            "ReservaMesa": fecha_in_m_str,
+            "CantidadMesas" : num_mesas,
+        })
+
+        print(f"¡Listo! {data['Nombre']}, tu reserva ha sido modificada para el {fecha_in_m_str}, un total de {num_mesas} mesas.")
+        speak(f"¡Listo! {data['Nombre']}, tu reserva ha sido modificada para el {fecha_in_m_str}, un total de {num_mesas} mesas.")
+
+    else:
+        print("No se encontraron datos para el DNI " + dni)
+        speak("Entonces no tienes reservas a este DNI")
+        speak("¿Desea realizar una reserva?")
+        respuesta = listen()
+        if respuesta == "si":
+            modificar_reserva_restaurant()
+        else:
+            return
+
 def handle_service():
     speak("¿Qué tipo de servicio deseas? ¿Hotel o Restaurante?")
     service_type = listen().lower()
@@ -359,29 +400,7 @@ def handle_service():
             )
 
         elif restaurant_action == "modificación de reserva":
-            speak(
-                "Lo siento, actualmente no es posible modificar reservas en nuestro restaurante. ¿Te gustaría hacer una nueva reserva?"
-            )
-            response = listen().lower()
-
-            if response == "sí":
-                speak("¿Cuál es tu nombre?")
-                name = listen()
-                speak("¿Cuál es la fecha de la reserva?")
-                reservation_date = listen()
-                speak("¿A qué hora te gustaría reservar?")
-                reservation_time = listen()
-                c.execute(
-                    "INSERT INTO restaurant VALUES (?, ?, ?)",
-                    (name, reservation_date, reservation_time),
-                )
-                conn.commit()
-                speak(
-                    f"¡Listo! Tu reserva ha sido registrada para el {reservation_date} a las {reservation_time}."
-                )
-
-            else:
-                speak("Entendido, ¿En qué más puedo ayudarte?")
+            modificar_reserva_restaurant()
 
         else:
             session_client = dialogflow.SessionsClient()
